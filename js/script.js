@@ -1,753 +1,359 @@
 /* ==========================================================================
-   SMART MATÉRIAUX — Stylesheet
-   Design tokens derived from the brand mark: deep navy, panel blue, leaf
-   green, and a warm desert-sun amber (Guelmim region accent).
-   Signature motif: "circuit trace" lines + nodes, echoing the logo's
-   root/circuit base.
+   SMART MATÉRIAUX — script.js
+   Vanilla JS: bilingual FR/EN toggle, sticky nav, mobile menu, scroll
+   reveal, project filter, scrollspy, and a mailto-based contact form.
+   No frameworks, no build step — works as-is on GitHub Pages.
    ========================================================================== */
 
-:root {
-  /* ---- Color tokens (sampled from brand logo) ---- */
-  --navy-950: #07203A;
-  --navy-900: #0A2A43;
-  --navy-800: #123A5C;
-  --navy-700: #1C4F78;
-  --blue-600: #1F77B4;
-  --blue-500: #2B8FDC;
-  --blue-100: #DCEBF7;
-  --green-600: #4E8C39;
-  --green-500: #5FA346;
-  --green-100: #E6F1DE;
-  --amber-600: #C97A1F;
-  --amber-500: #E0922F;
-  --amber-100: #FBEADA;
-  --teal-600: #0F9B8E;
-  --teal-500: #17B3A3;
-  --teal-100: #DCF3F0;
-  --sand-100: #F7F1E6;
+(function () {
+  "use strict";
 
-  --ink: #0A2A43;
-  --ink-soft: #3C5468;
-  --ink-faint: #6B8198;
-  --bg: #FFFFFF;
-  --bg-alt: #F4F8FB;
-  --line: #E2E9EF;
-  --line-strong: #C9D6E0;
+  /* ------------------------------------------------------------------ */
+  /* 1. i18n — English translations (French lives in the HTML directly) */
+  /* ------------------------------------------------------------------ */
+  const EN = {
+    "nav.home": "Home",
+    "nav.services": "Services",
+    "nav.onGrid": "On-Grid",
+    "nav.offGrid": "Off-Grid",
+    "nav.pompage": "Solar Water Pumping",
+    "nav.products": "Products",
+    "nav.projects": "Projects",
+    "nav.about": "About Us",
+    "nav.contact": "Contact",
 
-  /* ---- Type ---- */
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+    "hero.eyebrow": "SOLAR ENERGY · GUELMIM & REGION",
+    "hero.title1": "Smart solar solutions",
+    "hero.title2": "built for the field",
+    "hero.title3": "in agriculture and industry",
+    "hero.sub": "Installation, diagnostics and repair of on-grid, off-grid and solar water pumping systems, designed for farms and industrial sites across the Guelmim region.",
+    "hero.ctaPrimary": "Request a quote",
+    "hero.ctaSecondary": "Discover our services",
+    "hero.cap1": "Turnkey installation",
+    "hero.cap2": "Technical diagnostics",
+    "hero.cap3": "Repair & after-sales",
 
-  /* ---- Layout ---- */
-  --container: 1180px;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --shadow-sm: 0 1px 2px rgba(10, 42, 67, 0.06), 0 1px 1px rgba(10, 42, 67, 0.04);
-  --shadow-md: 0 8px 24px rgba(10, 42, 67, 0.10);
-  --shadow-lg: 0 20px 48px rgba(10, 42, 67, 0.16);
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-}
+    "trust.location": "📍 GUELMIM, MOROCCO",
+    "trust.sector": "AGRICULTURAL & INDUSTRIAL SOLUTIONS",
+    "trust.irrigation": "IRRIGATION & AGRICULTURAL PROJECTS",
 
-/* ---- Reset ---- */
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body, h1, h2, h3, h4, p, figure, blockquote { margin: 0; }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-img { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }
-button { font: inherit; cursor: pointer; }
-input, textarea, select { font: inherit; }
+    "services.eyebrow": "OUR SYSTEMS",
+    "services.title": "Three systems. One single expertise.",
+    "services.sub": "Grid-connected, fully autonomous, or built for irrigation — we install, diagnose and repair your solar system.",
+    "services.onGrid.title": "On-Grid",
+    "services.onGrid.desc": "Connected to the national power grid, cuts your bill through solar self-consumption, no batteries required.",
+    "services.offGrid.title": "Off-Grid",
+    "services.offGrid.desc": "Autonomous battery-based system for sites with no access to the grid: farms, workshops, remote sites.",
+    "services.pompage.title": "Solar Water Pumping",
+    "services.pompage.desc": "Pumps water directly with solar power, no battery needed — ideal for irrigation and livestock watering.",
+    "services.learnMore": "Learn more",
+    "services.maintenance.title": "Maintenance",
+    "services.maintenance.desc": "Ongoing technical support for your installation: regular diagnostics and fast repair, whatever the system.",
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    "tag.installation": "Installation",
+    "tag.diagnostic": "Diagnostics",
+    "tag.repair": "Repair",
+
+    "onGrid.title": "Grid-connected system",
+    "onGrid.desc": "Connected directly to the national power grid, the on-grid system prioritizes solar power and switches automatically to the grid when needed. Ideal for cutting energy costs at a site that's already connected.",
+    "onGrid.li1": "Installation of certified inverters and panels",
+    "onGrid.li2": "Production and efficiency diagnostics",
+    "onGrid.li3": "Repair and preventive maintenance",
+    "onGrid.li4": "Sizing tailored to your actual consumption",
+
+    "offGrid.title": "Autonomous battery system",
+    "offGrid.desc": "Built for isolated sites far from the power grid: remote farms, workshops, caretaker housing. The off-grid system stores solar energy in batteries for full autonomy, day and night.",
+    "offGrid.li1": "Battery sizing based on your real needs",
+    "offGrid.li2": "Installation of panels, charge controllers and inverters",
+    "offGrid.li3": "Autonomy and storage diagnostics",
+    "offGrid.li4": "After-sales service and component replacement",
+
+    "pompage.title": "Solar pumping for agriculture",
+    "pompage.desc": "A solution built for irrigation and livestock watering across the agricultural areas of the Guelmim region. Solar pumping runs without batteries, powered directly by the sun, for near-zero operating costs.",
+    "pompage.li1": "Borehole flow rate and depth assessment",
+    "pompage.li2": "Installation of submersible and surface pumps",
+    "pompage.li3": "Hydraulic performance diagnostics",
+    "pompage.li4": "Seasonal repair and maintenance",
+
+    "maintenance.title": "Diagnostics and repair, for every system",
+    "maintenance.desc": "A high-performing solar system is a well-maintained one. Our maintenance service covers full technical diagnostics and fast repair for your on-grid, off-grid or solar pumping installations, keeping their performance steady over time.",
+    "maintenance.li1": "Full performance and safety diagnostics",
+    "maintenance.li2": "Repair of panels, inverters, batteries and pumps",
+    "maintenance.li3": "Seasonal maintenance contracts",
+    "maintenance.li4": "Fast on-site response in Guelmim and the region",
+
+    "products.eyebrow": "EQUIPMENT",
+    "products.title": "Equipment for your solar installation",
+    "products.sub": "We supply and install reliable equipment, selected for agricultural and industrial field conditions.",
+    "prod.panels.title": "Solar Panels",
+    "prod.panels.desc": "High-performance photovoltaic modules, built for high heat conditions.",
+    "prod.inverters.title": "Inverters & Controllers",
+    "prod.inverters.desc": "On-grid / off-grid inverters and MPPT & PWM charge controllers.",
+    "prod.batteries.title": "Batteries",
+    "prod.batteries.desc": "Long-life solar batteries for off-grid autonomous systems.",
+    "prod.pumps.title": "Solar Pumps",
+    "prod.pumps.desc": "Submersible and surface pumps for irrigation and livestock watering.",
+    "prod.mounting.title": "Mounting Structures",
+    "prod.mounting.desc": "Sturdy mounting structures for ground or rooftop installation.",
+    "prod.cabling.title": "Cabling & Connectors",
+    "prod.cabling.desc": "Certified cables, connectors and protection gear for solar installations.",
+    "prod.protection.title": "Electrical Protection Elements",
+    "prod.protection.desc": "Circuit breakers, surge protectors and fuses to secure your solar installation.",
+    "prod.hydraulic.title": "Hydraulic Connection Accessories",
+    "prod.hydraulic.desc": "Fittings, valves and accessories for your solar pumping installations.",
+    "prod.cta": "Contact us",
+
+    "projects.eyebrow": "PROJECTS",
+    "projects.title": "Our installations in the field",
+    "projects.sub": "A look at our recent work in Guelmim and the surrounding region.",
+    "filter.all": "All",
+    "proj.p1.title": "Agricultural farm",
+    "proj.p1.loc": "Guelmim region",
+    "proj.p2.title": "Industrial workshop",
+    "proj.p2.loc": "Guelmim",
+    "proj.p3.title": "Remote farm",
+    "proj.p3.loc": "Guelmim region",
+    "proj.p4.title": "Packaging facility",
+    "proj.p4.loc": "Guelmim",
+    "proj.p5.title": "Agricultural borehole",
+    "proj.p5.loc": "Guelmim region",
+    "proj.p6.title": "Remote site",
+    "proj.p6.loc": "Guelmim region",
+    "projects.note": "📷 Gallery awaiting your site photos — replace these placeholders with your own images in /images/projects/ (see README.md).",
+
+    "about.eyebrow": "WHO WE ARE",
+    "about.title": "Solar expertise for agriculture and industry",
+    "about.p1": "Smart Matériaux is a Moroccan company specialized in solar solutions for the agricultural and industrial sectors, based in Guelmim. We support our clients from technical study through to maintenance, for on-grid, off-grid and solar pumping installations built to last. Our activity also covers irrigation and agricultural project realization.",
+    "about.p2": "Our approach: understand the field before proposing a solution. Every farm, every workshop has its own constraints — that's why every system is sized to measure.",
+    "about.v1.title": "Technical expertise",
+    "about.v1.desc": "Installation, diagnostics and repair by a team specialized in solar energy.",
+    "about.v2.title": "Tailor-made solutions",
+    "about.v2.desc": "Every system is sized to the site's real needs and activity.",
+    "about.v3.title": "Agriculture & industry",
+    "about.v3.desc": "Irrigation, pumping and agricultural project realization, alongside full industrial expertise.",
+    "about.v4.title": "Regional proximity",
+    "about.v4.desc": "Based in Guelmim, serving the entire region.",
+
+    "contact.eyebrow": "CONTACT",
+    "contact.title": "Let's talk about your solar project",
+    "contact.sub": "Diagnostics, quotes or technical questions — reach us directly.",
+    "contact.address": "ADDRESS",
+    "contact.phone": "LANDLINE",
+    "contact.email": "EMAIL",
+
+    "form.title": "Send a request",
+    "form.sub": "Fill out the form and we'll get back to you shortly.",
+    "form.name": "Full name",
+    "form.namePh": "Your name",
+    "form.phone": "Phone",
+    "form.phonePh": "06 XX XX XX XX",
+    "form.email": "Email",
+    "form.emailPh": "you@example.com",
+    "form.system": "System of interest",
+    "form.systemPh": "Select an option",
+    "form.systemOther": "Other / Not sure",
+    "form.service": "Service needed",
+    "form.servicePh": "Select an option",
+    "form.serviceInstall": "Installation",
+    "form.serviceMaintenance": "Maintenance (diagnostics and repair)",
+    "form.message": "Message",
+    "form.messagePh": "Describe your project or need...",
+    "form.submit": "Send request",
+    "form.note": "Clicking “Send” opens your email app with the request pre-filled. You can also reach us directly on WhatsApp.",
+
+    "footer.desc": "Installation, diagnostics and repair of on-grid, off-grid and solar water pumping systems for agriculture and industry. Based in Guelmim, Morocco.",
+    "footer.nav": "NAVIGATION",
+    "footer.systems": "SYSTEMS",
+    "footer.contact": "CONTACT",
+    "footer.copyright": "© 2026 Smart Matériaux. All rights reserved."
+  };
+
+  // Cache the original French text the first time we see each element
+  const FR_CACHE = new Map();
+
+  function cacheOriginals() {
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      FR_CACHE.set(el, el.textContent);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+      FR_CACHE.set(el, el.getAttribute("placeholder"));
+    });
   }
-}
 
-body {
-  font-family: var(--font-body);
-  color: var(--ink);
-  background: var(--bg);
-  font-size: 16px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-}
+  function setLanguage(lang) {
+    document.documentElement.setAttribute("lang", lang);
 
-.container {
-  width: 100%;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 24px;
-}
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (lang === "en" && EN[key]) {
+        el.textContent = EN[key];
+      } else {
+        el.textContent = FR_CACHE.get(el);
+      }
+    });
 
-h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(--navy-900); letter-spacing: -0.01em; }
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-placeholder");
+      if (lang === "en" && EN[key]) {
+        el.setAttribute("placeholder", EN[key]);
+      } else {
+        el.setAttribute("placeholder", FR_CACHE.get(el));
+      }
+    });
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--blue-600);
-  font-weight: 600;
-}
-.eyebrow::before {
-  content: "";
-  width: 18px;
-  height: 1px;
-  background: var(--blue-600);
-}
-
-.section { padding: 96px 0; }
-.section-alt { background: var(--bg-alt); }
-.section-head { max-width: 640px; margin-bottom: 56px; }
-.section-head h2 { font-size: clamp(1.7rem, 3vw, 2.4rem); margin-top: 14px; }
-.section-head p { margin-top: 16px; color: var(--ink-soft); font-size: 1.05rem; }
-.section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
-
-/* ---- Buttons ---- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 13px 26px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1.5px solid transparent;
-  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease), border-color .25s var(--ease), color .25s var(--ease);
-  white-space: nowrap;
-}
-.btn-primary { background: var(--navy-900); color: #fff; }
-.btn-primary:hover { background: var(--navy-800); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.btn-amber { background: var(--amber-500); color: var(--navy-950); }
-.btn-amber:hover { background: var(--amber-600); color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.btn-outline { background: transparent; border-color: var(--line-strong); color: var(--navy-900); }
-.btn-outline:hover { border-color: var(--navy-900); background: var(--bg-alt); }
-.btn-ghost { background: transparent; color: var(--navy-900); padding: 10px 4px; }
-.btn-ghost:hover { color: var(--blue-600); }
-.btn-sm { padding: 9px 18px; font-size: 0.85rem; }
-.btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-/* ==========================================================================
-   Header / Nav
-   ========================================================================== */
-.site-header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease), background 0.3s var(--ease);
-}
-.site-header.scrolled {
-  border-bottom-color: var(--line);
-  box-shadow: 0 4px 20px rgba(10,42,67,0.06);
-}
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 76px;
-  gap: 20px;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.brand-logo { height: 42px; width: auto; }
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 0 auto;
-}
-.nav-links > li { position: relative; }
-.nav-links > li > a {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-size: 0.93rem;
-  font-weight: 500;
-  color: var(--ink-soft);
-  transition: background 0.2s, color 0.2s;
-}
-.nav-links > li > a:hover, .nav-links > li > a.active { background: var(--bg-alt); color: var(--navy-900); }
-
-.nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.lang-toggle {
-  display: flex;
-  align-items: center;
-  background: var(--bg-alt);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 3px;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-.lang-toggle button {
-  background: transparent;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 999px;
-  color: var(--ink-faint);
-  transition: background 0.2s, color 0.2s;
-}
-.lang-toggle button.active { background: var(--navy-900); color: #fff; }
-
-.nav-phone {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--navy-900);
-}
-.nav-phone svg { width: 16px; height: 16px; color: var(--green-600); }
-
-.nav-burger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  padding: 8px;
-}
-.nav-burger span { width: 22px; height: 2px; background: var(--navy-900); border-radius: 2px; transition: transform .3s var(--ease), opacity .3s var(--ease); }
-.nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.nav-burger.open span:nth-child(2) { opacity: 0; }
-.nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-.mobile-menu { display: none; }
-
-/* ==========================================================================
-   Hero
-   ========================================================================== */
-.hero {
-  position: relative;
-  padding: 168px 0 110px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #FBFDFF 0%, #fff 60%);
-}
-.hero-circuit {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0.55;
-}
-.hero-grid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 50px;
-  align-items: center;
-}
-.hero-copy .eyebrow { margin-bottom: 22px; }
-.hero h1 {
-  font-size: clamp(2.2rem, 4.4vw, 3.4rem);
-  line-height: 1.12;
-}
-.hero h1 .accent { color: var(--blue-600); }
-.hero-sub {
-  margin-top: 22px;
-  font-size: 1.12rem;
-  color: var(--ink-soft);
-  max-width: 520px;
-}
-.hero-cta { display: flex; gap: 14px; margin-top: 36px; flex-wrap: wrap; }
-
-.capability-strip {
-  display: flex;
-  gap: 28px;
-  margin-top: 52px;
-  flex-wrap: wrap;
-}
-.capability-strip .cap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--navy-800);
-}
-.capability-strip .cap .ic {
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--blue-100);
-  color: var(--blue-600);
-  flex-shrink: 0;
-}
-.capability-strip .cap .ic svg { width: 18px; height: 18px; }
-
-.hero-visual { position: relative; aspect-ratio: 1/1; }
-.hero-visual svg { width: 100%; height: 100%; }
-
-/* ==========================================================================
-   Trust / location bar
-   ========================================================================== */
-.trust-bar {
-  background: var(--navy-900);
-  color: #fff;
-  padding: 18px 0;
-}
-.trust-bar .container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
-  color: var(--blue-100);
-}
-.trust-bar strong { color: #fff; font-weight: 600; }
-.trust-sep { color: var(--blue-500); }
-
-/* ==========================================================================
-   Services (signature hub + spokes)
-   ========================================================================== */
-.services-diagram { position: relative; margin-top: 30px; }
-.hub-wrap { display: flex; justify-content: center; margin-bottom: -1px; position: relative; z-index: 2; }
-.hub {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--navy-900);
-  color: #fff;
-  padding: 12px 22px;
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  box-shadow: var(--shadow-md);
-}
-.hub img { height: 22px; width: auto; }
-
-.circuit-spokes { width: 100%; height: 64px; display: block; margin-top: -2px; }
-
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-}
-.service-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: 32px 28px 28px;
-  position: relative;
-  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
-}
-.service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: transparent; }
-.service-card .node-dot {
-  width: 12px; height: 12px; border-radius: 50%;
-  position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
-  border: 3px solid #fff;
-}
-.service-card .s-icon {
-  width: 54px; height: 54px;
-  border-radius: var(--radius-md);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 20px;
-}
-.service-card .s-icon svg { width: 28px; height: 28px; }
-.service-card h3 { font-size: 1.22rem; margin-bottom: 10px; }
-.service-card p { color: var(--ink-soft); font-size: 0.96rem; }
-.service-card .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.service-card .tags span {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-weight: 600;
-  background: var(--bg-alt);
-  color: var(--ink-soft);
-}
-.service-card .learn { display: inline-flex; align-items: center; gap: 6px; margin-top: 22px; font-weight: 600; font-size: 0.88rem; color: var(--navy-900); }
-.service-card .learn svg { width: 14px; height: 14px; transition: transform .25s var(--ease); }
-.service-card:hover .learn svg { transform: translateX(4px); }
-
-.service-card.on-grid .node-dot { background: var(--blue-600); }
-.service-card.on-grid .s-icon { background: var(--blue-100); color: var(--blue-600); }
-.service-card.off-grid .node-dot { background: var(--green-600); }
-.service-card.off-grid .s-icon { background: var(--green-100); color: var(--green-600); }
-.service-card.pompage .node-dot { background: var(--amber-600); }
-.service-card.pompage .s-icon { background: var(--amber-100); color: var(--amber-600); }
-.service-card.maintenance .node-dot { background: var(--teal-600); }
-.service-card.maintenance .s-icon { background: var(--teal-100); color: var(--teal-600); }
-
-/* Detail blocks for each system (anchored sections) */
-.system-detail {
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 60px;
-  align-items: center;
-  padding: 80px 0;
-  border-top: 1px solid var(--line);
-  scroll-margin-top: 90px;
-}
-.system-detail:nth-child(even) .system-media { order: -1; }
-.system-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em;
-  text-transform: uppercase; font-weight: 700; padding: 7px 14px; border-radius: 999px;
-}
-.system-detail h3 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin-top: 16px; }
-.system-detail .desc { margin-top: 16px; color: var(--ink-soft); font-size: 1.02rem; }
-.system-list { margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
-.system-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.95rem; color: var(--navy-800); font-weight: 500; }
-.system-list li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
-.system-media { position: relative; }
-.system-media svg { width: 100%; height: auto; }
-
-#on-grid .system-tag { background: var(--blue-100); color: var(--blue-600); }
-#off-grid .system-tag { background: var(--green-100); color: var(--green-600); }
-#pompage .system-tag { background: var(--amber-100); color: var(--amber-600); }
-
-/* ==========================================================================
-   Products
-   ========================================================================== */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-}
-.product-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: box-shadow 0.3s var(--ease), transform 0.3s var(--ease);
-}
-.product-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
-.product-thumb {
-  aspect-ratio: 4/3;
-  background: var(--bg-alt);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-}
-.product-thumb svg { width: 56px; height: 56px; color: var(--blue-600); opacity: 0.85; }
-.product-card .pc-body { padding: 20px 22px 22px; }
-.product-card h4 { font-size: 1.04rem; margin-bottom: 6px; }
-.product-card p { font-size: 0.88rem; color: var(--ink-soft); }
-.product-card .pc-foot {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
-}
-.product-card .pc-foot a { font-size: 0.84rem; font-weight: 600; color: var(--blue-600); display: inline-flex; align-items: center; gap: 5px; }
-.product-card .pc-foot a svg { width: 13px; height: 13px; }
-
-/* ==========================================================================
-   Projects / Gallery
-   ========================================================================== */
-.filter-tabs { display: flex; gap: 10px; margin-bottom: 36px; flex-wrap: wrap; }
-.filter-tabs button {
-  background: #fff;
-  border: 1px solid var(--line-strong);
-  padding: 9px 18px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ink-soft);
-  transition: all 0.2s var(--ease);
-}
-.filter-tabs button:hover { border-color: var(--navy-900); color: var(--navy-900); }
-.filter-tabs button.active { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-}
-.project-card {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 4/3.1;
-  background: var(--navy-900);
-  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
-}
-.project-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-.project-card .ph-bg {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.project-card .ph-bg svg { width: 64px; height: 64px; opacity: 0.22; color: #fff; }
-.project-card .pc-photo {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-}
-.project-card .pc-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 35%, rgba(7,32,58,0.92) 100%);
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 20px;
-}
-.project-card .pc-tag {
-  align-self: flex-start;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-.project-card h4 { color: #fff; font-size: 1.02rem; font-family: var(--font-display); }
-.project-card p { color: rgba(255,255,255,0.7); font-size: 0.82rem; margin-top: 4px; }
-.project-card.hidden { display: none; }
-
-.projects-note {
-  margin-top: 26px;
-  font-size: 0.85rem;
-  color: var(--ink-faint);
-  background: var(--bg-alt);
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-sm);
-  padding: 14px 18px;
-  font-family: var(--font-mono);
-}
-
-/* ==========================================================================
-   About
-   ========================================================================== */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 70px;
-  align-items: start;
-}
-.about-copy p { color: var(--ink-soft); font-size: 1.02rem; margin-top: 16px; }
-
-.values-rail { position: relative; padding-left: 30px; }
-.values-rail::before {
-  content: "";
-  position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1.5px;
-  background: repeating-linear-gradient(to bottom, var(--line-strong) 0, var(--line-strong) 4px, transparent 4px, transparent 9px);
-}
-.value-node { position: relative; padding-bottom: 36px; }
-.value-node:last-child { padding-bottom: 0; }
-.value-node::before {
-  content: "";
-  position: absolute; left: -30px; top: 4px;
-  width: 11px; height: 11px; border-radius: 50%;
-  background: var(--blue-600);
-  border: 3px solid var(--blue-100);
-}
-.value-node h4 { font-size: 1.02rem; margin-bottom: 6px; }
-.value-node p { font-size: 0.9rem; color: var(--ink-soft); }
-
-/* ==========================================================================
-   Contact
-   ========================================================================== */
-.contact-grid {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 50px;
-}
-.contact-cards { display: flex; flex-direction: column; gap: 14px; }
-.contact-card {
-  display: flex; gap: 16px;
-  padding: 20px;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.contact-card:hover { border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
-.contact-card .cc-icon {
-  width: 42px; height: 42px; border-radius: 10px;
-  background: var(--blue-100); color: var(--blue-600);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
-.contact-card .cc-icon svg { width: 21px; height: 21px; }
-.contact-card .cc-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600;}
-.contact-card .cc-value { font-weight: 600; color: var(--navy-900); margin-top: 3px; font-size: 0.96rem; }
-.contact-card .cc-value a:hover { color: var(--blue-600); }
-
-.map-embed {
-  margin-top: 4px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid var(--line);
-  aspect-ratio: 16/11;
-}
-.map-embed iframe { width: 100%; height: 100%; border: 0; }
-
-.contact-form {
-  background: var(--navy-900);
-  border-radius: var(--radius-lg);
-  padding: 40px;
-  color: #fff;
-}
-.contact-form h3 { color: #fff; font-size: 1.3rem; }
-.contact-form > p { color: var(--blue-100); font-size: 0.9rem; margin-top: 8px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 26px; }
-.form-field { display: flex; flex-direction: column; gap: 8px; }
-.form-field.full { grid-column: 1 / -1; }
-.form-field label { font-size: 0.8rem; font-weight: 600; color: var(--blue-100); }
-.form-field input, .form-field select, .form-field textarea {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  color: #fff;
-  font-size: 0.92rem;
-  transition: border-color 0.2s, background 0.2s;
-}
-.form-field input::placeholder, .form-field textarea::placeholder { color: rgba(255,255,255,0.4); }
-.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
-  outline: none; border-color: var(--amber-500); background: rgba(255,255,255,0.1);
-}
-.form-field select option { color: var(--ink); }
-.contact-form .btn-amber { margin-top: 24px; width: 100%; }
-.form-note { margin-top: 14px; font-size: 0.78rem; color: rgba(255,255,255,0.5); }
-
-/* ==========================================================================
-   Footer
-   ========================================================================== */
-.site-footer { background: var(--navy-950); color: rgba(255,255,255,0.75); padding: 70px 0 0; }
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.3fr 0.8fr 0.8fr 1fr;
-  gap: 40px;
-  padding-bottom: 50px;
-}
-.footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.footer-brand img { height: 36px; }
-.footer-brand span { font-family: var(--font-display); font-weight: 700; color: #fff; }
-.footer-grid p { font-size: 0.88rem; line-height: 1.6; color: rgba(255,255,255,0.55); max-width: 280px; }
-.footer-col h5 { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; margin-bottom: 18px; }
-.footer-col ul { display: flex; flex-direction: column; gap: 11px; }
-.footer-col a { font-size: 0.9rem; color: rgba(255,255,255,0.75); transition: color 0.2s; }
-.footer-col a:hover { color: var(--blue-500); }
-.footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding: 22px 0;
-  display: flex; justify-content: center; align-items: center;
-  font-size: 0.8rem; color: rgba(255,255,255,0.45);
-  flex-wrap: wrap; gap: 10px;
-}
-.footer-bottom a { color: rgba(255,255,255,0.45); }
-.footer-bottom a:hover { color: #fff; }
-
-/* ==========================================================================
-   Floating WhatsApp button
-   ========================================================================== */
-.float-whatsapp {
-  position: fixed;
-  bottom: 26px; right: 26px;
-  z-index: 90;
-  width: 58px; height: 58px;
-  border-radius: 50%;
-  background: #25D366;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 24px rgba(37,211,102,0.45);
-  transition: transform 0.25s var(--ease);
-}
-.float-whatsapp:hover { transform: scale(1.08); }
-.float-whatsapp svg { width: 28px; height: 28px; color: #fff; }
-
-/* ==========================================================================
-   Scroll reveal
-   ========================================================================== */
-.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-.reveal.in-view { opacity: 1; transform: translateY(0); }
-.reveal-stagger.in-view > * { animation: none; }
-
-/* ==========================================================================
-   i18n visibility helper
-   ========================================================================== */
-[data-i18n-en] { }
-html[lang="en"] [data-fr-only] { display: none !important; }
-html[lang="fr"] [data-en-only] { display: none !important; }
-
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
-@media (max-width: 1080px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-visual { max-width: 440px; margin: 0 auto; order: -1; }
-  .services-grid { grid-template-columns: 1fr 1fr; }
-  .products-grid { grid-template-columns: 1fr 1fr; }
-  .projects-grid { grid-template-columns: 1fr 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-  .system-detail { grid-template-columns: 1fr; gap: 36px; }
-  .system-detail .system-media { order: -1 !important; max-width: 420px; margin: 0 auto; width: 100%; }
-  .about-grid { grid-template-columns: 1fr; gap: 40px; }
-  .contact-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 860px) {
-  .nav-links, .nav-actions .nav-phone { display: none; }
-  .nav-burger { display: flex; }
-  .nav-actions { gap: 8px; }
-
-  .mobile-menu {
-    display: block;
-    position: fixed;
-    top: 76px; left: 0; right: 0; bottom: 0;
-    background: #fff;
-    z-index: 99;
-    padding: 30px 24px;
-    transform: translateX(100%);
-    transition: transform 0.35s var(--ease);
-    overflow-y: auto;
+    document.getElementById("langFr").classList.toggle("active", lang === "fr");
+    document.getElementById("langEn").classList.toggle("active", lang === "en");
+    document.title = lang === "en"
+      ? "Smart Matériaux — On-Grid, Off-Grid & Solar Pumping Installation | Guelmim"
+      : "Smart Matériaux — Installation Solaire On-Grid, Off-Grid & Pompage | Guelmim";
   }
-  .mobile-menu.open { transform: translateX(0); }
-  .mobile-menu ul { display: flex; flex-direction: column; gap: 4px; }
-  .mobile-menu > ul > li > a { font-size: 1.05rem; font-weight: 600; padding: 14px 6px; border-bottom: 1px solid var(--line); display:block; }
-  .mobile-submenu { padding-left: 16px; display: flex; flex-direction: column; }
-  .mobile-submenu a { padding: 12px 6px; font-size: 0.92rem; color: var(--ink-soft); display:block; }
-  .mobile-menu .nav-phone-mobile { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
 
-  .hero { padding: 140px 0 80px; }
-  .section { padding: 70px 0; }
-  .services-grid { grid-template-columns: 1fr; }
-  .products-grid { grid-template-columns: 1fr 1fr; }
-  .projects-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-  .form-row { grid-template-columns: 1fr; }
-  .capability-strip { gap: 20px; }
-}
+  /* ------------------------------------------------------------------ */
+  /* 2. Sticky header + mobile menu                                     */
+  /* ------------------------------------------------------------------ */
+  function initHeader() {
+    const header = document.getElementById("siteHeader");
+    const burger = document.getElementById("navBurger");
+    const mobileMenu = document.getElementById("mobileMenu");
 
-@media (max-width: 540px) {
-  .container { padding: 0 18px; }
-  .hero-cta { flex-direction: column; align-items: stretch; }
-  .hero-cta .btn { width: 100%; }
-  .products-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .contact-form { padding: 26px; }
-  .trust-bar .container { font-size: 0.72rem; }
-}
+    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    burger.addEventListener("click", () => {
+      const open = burger.classList.toggle("open");
+      mobileMenu.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      document.body.style.overflow = open ? "hidden" : "";
+    });
+
+    mobileMenu.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => {
+        burger.classList.remove("open");
+        mobileMenu.classList.remove("open");
+        document.body.style.overflow = "";
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 3. Scroll reveal                                                    */
+  /* ------------------------------------------------------------------ */
+  function initReveal() {
+    const items = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      items.forEach((el) => el.classList.add("in-view"));
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    items.forEach((el) => obs.observe(el));
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 4. Scrollspy — highlight active nav link                            */
+  /* ------------------------------------------------------------------ */
+  function initScrollspy() {
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav-links > li > a");
+    if (!sections.length || !("IntersectionObserver" in window)) return;
+
+    const linkFor = (id) =>
+      [...navLinks].find((a) => a.getAttribute("href") === "#" + id);
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = linkFor(entry.target.id);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            navLinks.forEach((a) => a.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
+    sections.forEach((s) => obs.observe(s));
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 5. Project filter                                                    */
+  /* ------------------------------------------------------------------ */
+  function initFilter() {
+    const buttons = document.querySelectorAll(".filter-tabs button");
+    const cards = document.querySelectorAll(".project-card");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        buttons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const filter = btn.getAttribute("data-filter");
+        cards.forEach((card) => {
+          const match = filter === "all" || card.getAttribute("data-category") === filter;
+          card.classList.toggle("hidden", !match);
+        });
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 6. Contact form — mailto fallback (no backend needed on GitHub Pages)*/
+  /* ------------------------------------------------------------------ */
+  function initForm() {
+    const form = document.getElementById("contactForm");
+    if (!form) return;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const name = (data.get("name") || "").toString().trim();
+      const phone = (data.get("phone") || "").toString().trim();
+      const email = (data.get("email") || "").toString().trim();
+      const system = (data.get("system") || "").toString().trim();
+      const serviceType = (data.get("service_type") || "").toString().trim();
+      const message = (data.get("message") || "").toString().trim();
+
+      const subject = `Demande de devis — ${name || "Site web"}`;
+      const bodyLines = [
+        `Nom: ${name}`,
+        `Téléphone: ${phone}`,
+        email ? `Email: ${email}` : null,
+        system ? `Système concerné: ${system}` : null,
+        serviceType ? `Service souhaité: ${serviceType}` : null,
+        "",
+        "Message:",
+        message
+      ].filter(Boolean);
+
+      const mailto = `mailto:sarl.smart01@gmail.com?subject=${encodeURIComponent(
+        subject
+      )}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+
+      window.location.href = mailto;
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Init                                                                 */
+  /* ------------------------------------------------------------------ */
+  document.addEventListener("DOMContentLoaded", () => {
+    cacheOriginals();
+
+    document.getElementById("langFr").addEventListener("click", () => setLanguage("fr"));
+    document.getElementById("langEn").addEventListener("click", () => setLanguage("en"));
+
+    initHeader();
+    initReveal();
+    initScrollspy();
+    initFilter();
+    initForm();
+  });
+})();
