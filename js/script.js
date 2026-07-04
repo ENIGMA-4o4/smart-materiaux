@@ -38,8 +38,9 @@
     "trust.irrigation": "IRRIGATION & AGRICULTURAL PROJECTS",
 
     "services.eyebrow": "OUR SYSTEMS",
-    "services.title": "Three systems. One complete service.",
-    "services.sub": "Grid-connected, fully autonomous, or built for irrigation — plus dedicated maintenance to keep them running.",
+    "services.title": "Three systems. One single expertise.",
+    "services.sub": "Grid-connected, fully autonomous, or built for irrigation — we install, diagnose and repair your solar system.",
+    "maintenance.banner.eyebrow": "CROSS-SYSTEM SERVICE — FOR ALL 3 SYSTEMS",
     "services.onGrid.title": "On-Grid",
     "services.onGrid.desc": "Connected to the national power grid, cuts your bill through solar self-consumption, no batteries required.",
     "services.offGrid.title": "Off-Grid",
