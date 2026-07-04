@@ -21,6 +21,9 @@
   --amber-600: #C97A1F;
   --amber-500: #E0922F;
   --amber-100: #FBEADA;
+  --teal-600: #0F9B8E;
+  --teal-500: #17B3A3;
+  --teal-100: #DCF3F0;
   --sand-100: #F7F1E6;
 
   --ink: #0A2A43;
@@ -348,8 +351,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
 }
 .service-card {
   background: #fff;
@@ -396,6 +399,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(
 .service-card.off-grid .s-icon { background: var(--green-100); color: var(--green-600); }
 .service-card.pompage .node-dot { background: var(--amber-600); }
 .service-card.pompage .s-icon { background: var(--amber-100); color: var(--amber-600); }
+.service-card.maintenance .node-dot { background: var(--teal-600); }
+.service-card.maintenance .s-icon { background: var(--teal-100); color: var(--teal-600); }
 
 /* Detail blocks for each system (anchored sections) */
 .system-detail {
@@ -494,6 +499,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(
   display: flex; align-items: center; justify-content: center;
 }
 .project-card .ph-bg svg { width: 64px; height: 64px; opacity: 0.22; color: #fff; }
+.project-card .pc-photo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
 .project-card .pc-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, transparent 35%, rgba(7,32,58,0.92) 100%);
@@ -517,17 +527,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(
 .project-card p { color: rgba(255,255,255,0.7); font-size: 0.82rem; margin-top: 4px; }
 .project-card.hidden { display: none; }
 
-.projects-note {
-  margin-top: 26px;
-  font-size: 0.85rem;
-  color: var(--ink-faint);
-  background: var(--bg-alt);
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-sm);
-  padding: 14px 18px;
-  font-family: var(--font-mono);
-}
-
 /* ==========================================================================
    About
    ========================================================================== */
@@ -538,25 +537,6 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(
   align-items: start;
 }
 .about-copy p { color: var(--ink-soft); font-size: 1.02rem; margin-top: 16px; }
-.founder-card {
-  display: flex;
-  gap: 16px;
-  margin-top: 32px;
-  padding: 22px;
-  background: var(--bg-alt);
-  border-radius: var(--radius-md);
-  border-left: 3px solid var(--amber-500);
-}
-.founder-avatar {
-  width: 50px; height: 50px; border-radius: 50%;
-  background: var(--navy-900); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.founder-card blockquote { font-size: 0.96rem; font-style: italic; color: var(--navy-800); }
-.founder-card .f-name { margin-top: 10px; font-size: 0.84rem; font-weight: 700; color: var(--navy-900); font-style: normal; }
-.founder-card .f-role { font-size: 0.78rem; color: var(--ink-faint); font-style: normal; }
 
 .values-rail { position: relative; padding-left: 30px; }
 .values-rail::before {
@@ -661,19 +641,10 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; color: var(
 .footer-col ul { display: flex; flex-direction: column; gap: 11px; }
 .footer-col a { font-size: 0.9rem; color: rgba(255,255,255,0.75); transition: color 0.2s; }
 .footer-col a:hover { color: var(--blue-500); }
-.footer-social { display: flex; gap: 10px; margin-top: 18px; }
-.footer-social a {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s;
-}
-.footer-social a:hover { background: var(--blue-600); }
-.footer-social svg { width: 17px; height: 17px; }
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.1);
   padding: 22px 0;
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; justify-content: center; align-items: center;
   font-size: 0.8rem; color: rgba(255,255,255,0.45);
   flex-wrap: wrap; gap: 10px;
 }
