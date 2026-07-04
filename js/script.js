@@ -119,7 +119,6 @@
     "proj.p5.loc": "Guelmim region",
     "proj.p6.title": "Remote site",
     "proj.p6.loc": "Guelmim region",
-    "projects.note": "📷 Gallery awaiting your site photos — replace these placeholders with your own images in /images/projects/ (see README.md).",
 
     "about.eyebrow": "WHO WE ARE",
     "about.title": "Solar expertise for agriculture and industry",
